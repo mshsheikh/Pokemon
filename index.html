@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pokémon</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        font-family: Arial, sans-serif;
+        color: white;
+        background-color: #000000;
+        overflow: hidden;
+      }
+
+      body {
+        background-image: url("https://i.gifer.com/YdBN.gif");
+        background-size: flex;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        transition: background-position 1.1s ease-out;
+      }
+
+      .content {
+        text-align: center;
+        z-index: 2;
+        position: relative;
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 4em;
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+
+      p {
+        font-size: 1.5em;
+        margin-top: 10px;
+      }
+
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2.5em;
+        }
+
+        p {
+          font-size: 1.2em;
+        }
+      }
+
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 1.4em;
+        }
+
+        p {
+          font-size: 0.8em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <h1>Gotta Catch 'Em All!</h1>
+      <p>Welcome to the world of Pokémon!</p>
+    </div>
+
+    <script>
+      document.addEventListener("mousemove", function (event) {
+        var x = event.clientX / window.innerWidth;
+        var y = event.clientY / window.innerHeight;
+
+        document.body.style.backgroundPosition = x * 100 + "% " + y * 100 + "%";
+      });
+    </script>
+  </body>
+</html>
