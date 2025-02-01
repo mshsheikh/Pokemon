@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pokémon Cards C</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+        min-height: 100vh;
+        color: #fff;
+        overflow-y: auto;
+      }
+
+      .content {
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 3.5rem;
+        color: #ffcb05;
+        text-shadow: 3px 3px #2a75bb;
+        margin-bottom: 1.5rem;
+        letter-spacing: 2px;
+      }
+
+      .card-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 2rem 0;
+      }
+
+      /* Card Styles */
+      .pokemon-card {
+        border-radius: 15px;
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease;
+        min-height: 500px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .pokemon-card:hover {
+        transform: translateY(-10px);
+      }
+
+      /* Backgrounds */
+      .electric {
+        background: linear-gradient(145deg, #f8d030 0%, #b79f38 100%);
+      }
+
+      .fire {
+        background: linear-gradient(145deg, #f08030 0%, #9c531f 100%);
+      }
+
+      .water {
+        background: linear-gradient(145deg, #6890f0 0%, #445e9c 100%);
+      }
+
+      .card-image-container {
+        background: url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/148c18ce-5439-4166-9075-2972ba9457e8/dhaxeit-cd887008-1141-44a9-ab3f-b8dea03e4e3d.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzE0OGMxOGNlLTU0MzktNDE2Ni05MDc1LTI5NzJiYTk0NTdlOFwvZGhheGVpdC1jZDg4NzAwOC0xMTQxLTQ0YTktYWIzZi1iOGRlYTAzZTRlM2QucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.lkhnbZnVuut5KPZeSldtRZ3f_Ubo85TpPY8gqZrbnBA")
+          bottom/contain repeat-x;
+        height: 250px;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .pokemon-img {
+        width: 70%;
+        height: auto;
+        image-rendering: pixelated;
+        filter: drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.3));
+        z-index: 1;
+      }
+
+      .pokemon-id {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-weight: bold;
+      }
+
+      .pokemon-details {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        padding: 1rem;
+        color: #2c2c2c;
+        flex-grow: 1;
+      }
+
+      .pokemon-name {
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: #2a75bb;
+      }
+
+      .type-badge {
+        display: inline-block;
+        padding: 0.3rem 1rem;
+        border-radius: 20px;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+      }
+
+      .electric .type-badge {
+        background: #f8d030;
+        color: #2c2c2c;
+      }
+      .fire .type-badge {
+        background: #f08030;
+        color: white;
+      }
+      .water .type-badge {
+        background: #6890f0;
+        color: white;
+      }
+
+      .stats-table {
+        width: 100%;
+        margin-bottom: 1rem;
+      }
+
+      .stats-table td {
+        padding: 0.3rem;
+        font-size: 0.9rem;
+      }
+
+      .ability-list {
+        list-style: none;
+        padding-left: 1rem;
+      }
+
+      .ability-list li {
+        margin-bottom: 0.5rem;
+        position: relative;
+      }
+
+      .ability-list li::before {
+        content: "•";
+        color: #2a75bb;
+        position: absolute;
+        left: -1rem;
+      }
+
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2.5rem;
+        }
+
+        .card-container {
+          grid-template-columns: 1fr;
+        }
+
+        .pokemon-card {
+          min-height: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <h1>Pokémon Trading Cards</h1>
+
+      <div class="card-container">
+        <!-- Pikachu Card -->
+        <div class="pokemon-card electric">
+          <div class="pokemon-id">#025</div>
+          <div class="card-image-container">
+            <img
+              src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNnlrdm9uMG1wemFqNmIxbTE1cGY3bTJ3dm9reWc5b2k3N2h0MXU0NCZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/FCffpN404oRZpFbSzl/giphy.gif"
+              alt="Pikachu"
+              class="pokemon-img"
+            />
+          </div>
+          <div class="pokemon-details">
+            <div class="pokemon-name">Pikachu</div>
+            <div class="type-badge">Electric</div>
+
+            <table class="stats-table">
+              <tr>
+                <td>HP:</td>
+                <td><strong>35</strong></td>
+                <td>Height:</td>
+                <td>0.4m</td>
+              </tr>
+              <tr>
+                <td>Attack:</td>
+                <td><strong>55</strong></td>
+                <td>Weight:</td>
+                <td>6.0kg</td>
+              </tr>
+              <tr>
+                <td>Defense:</td>
+                <td><strong>40</strong></td>
+                <td>Speed:</td>
+                <td>90</td>
+              </tr>
+            </table>
+
+            <h3>Abilities:</h3>
+            <ul class="ability-list">
+              <li>
+                <strong>Static:</strong> Has a 30% chance to paralyze attackers
+                on contact
+              </li>
+              <li>
+                <strong>Lightning Rod:</strong> Draws in all Electric-type moves
+                to boost Sp. Atk
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Charmander Card -->
+        <div class="pokemon-card fire">
+          <div class="pokemon-id">#004</div>
+          <div class="card-image-container">
+            <img
+              src="https://media.giphy.com/media/6xr4bW2csldWKmJkjO/giphy.gif?cid=790b7611h6p622k9s2tubxdvjssy5wkhfcnhk3x72a3uevta&ep=v1_stickers_search&rid=giphy.gif&ct=s"
+              alt="Charmander"
+              class="pokemon-img"
+            />
+          </div>
+          <div class="pokemon-details">
+            <div class="pokemon-name">Charmander</div>
+            <div class="type-badge">Fire</div>
+
+            <table class="stats-table">
+              <tr>
+                <td>HP:</td>
+                <td><strong>39</strong></td>
+                <td>Height:</td>
+                <td>0.6m</td>
+              </tr>
+              <tr>
+                <td>Attack:</td>
+                <td><strong>52</strong></td>
+                <td>Weight:</td>
+                <td>8.5kg</td>
+              </tr>
+              <tr>
+                <td>Defense:</td>
+                <td><strong>43</strong></td>
+                <td>Speed:</td>
+                <td>65</td>
+              </tr>
+            </table>
+
+            <h3>Abilities:</h3>
+            <ul class="ability-list">
+              <li>
+                <strong>Blaze:</strong> Boosts Fire-type moves by 50% when HP is
+                low
+              </li>
+              <li>
+                <strong>Solar Power:</strong> Increases Sp. Atk by 50% in sunny
+                weather
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Squirtle Card -->
+        <div class="pokemon-card water">
+          <div class="pokemon-id">#007</div>
+          <div class="card-image-container">
+            <img
+              src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMGd4OXJidDNxdzVzNGJxd3dsdjBucXVwamhuNmhzajV5c3VmMGJtbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/sIo7BCXxPDPNDfS3dE/giphy.gif"
+              alt="Squirtle"
+              class="pokemon-img"
+            />
+          </div>
+          <div class="pokemon-details">
+            <div class="pokemon-name">Squirtle</div>
+            <div class="type-badge">Water</div>
+
+            <table class="stats-table">
+              <tr>
+                <td>HP:</td>
+                <td><strong>44</strong></td>
+                <td>Height:</td>
+                <td>0.5m</td>
+              </tr>
+              <tr>
+                <td>Attack:</td>
+                <td><strong>48</strong></td>
+                <td>Weight:</td>
+                <td>9.0kg</td>
+              </tr>
+              <tr>
+                <td>Defense:</td>
+                <td><strong>65</strong></td>
+                <td>Speed:</td>
+                <td>43</td>
+              </tr>
+            </table>
+
+            <h3>Abilities:</h3>
+            <ul class="ability-list">
+              <li>
+                <strong>Torrent:</strong> Boosts Water-type moves by 50% when HP
+                is low
+              </li>
+              <li><strong>Rain Dish:</strong> Recovers HP during rain</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
