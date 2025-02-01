@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pokémon Card B</title>
+    <style>
+      .content {
+        text-align: center;
+        z-index: 2;
+        position: relative;
+        padding: 20px;
+      }
+      .cards-container {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .pokemon-card {
+        background: linear-gradient(145deg, #f8d030 0%, #b8a038 100%);
+        border-radius: 15px;
+        padding: 1rem;
+        width: 100%;
+        max-width: 300px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        position: relative;
+        margin: 1rem;
+        transition: transform 0.3s ease;
+      }
+
+      .pokemon-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .pokemon-name {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #2c2c2c;
+      }
+
+      .hp {
+        background: #fff;
+        padding: 0.2rem 0.8rem;
+        border-radius: 20px;
+        font-weight: bold;
+        color: #2c2c2c;
+      }
+
+      .card-image {
+        background: #fff;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .card-image img {
+        width: 100%;
+        height: auto;
+        image-rendering: pixelated;
+      }
+
+      .card-details {
+        background: #fff;
+        border-radius: 10px;
+        padding: 1rem;
+        color: #2c2c2c;
+      }
+
+      @media (max-width: 768px) {
+        .pokemon-card {
+          max-width: 250px;
+        }
+
+        .pokemon-name {
+          font-size: 1.2rem;
+        }
+
+        .hp {
+          font-size: 0.9rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .pokemon-card {
+          max-width: 90%;
+          margin: 1rem 0;
+        }
+      }
+
+      /* Colors Shades */
+      .fire {
+        background: linear-gradient(145deg, #f08030 0%, #9c531f 100%);
+      }
+      .water {
+        background: linear-gradient(145deg, #6890f0 0%, #445e9c 100%);
+      }
+      .electric {
+        background: linear-gradient(145deg, #f8d030 0%, #a1871f 100%);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <h1>Gotta Catch 'Em All!</h1>
+      <p>Welcome to the world of Pokémon!</p>
+
+      <div class="cards-container">
+        <!-- Pikachu Card -->
+        <div class="pokemon-card electric">
+          <div class="card-header">
+            <span class="pokemon-name">Pikachu</span>
+            <span class="hp">HP 60</span>
+          </div>
+          <div class="card-image">
+            <img
+              src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNnlrdm9uMG1wemFqNmIxbTE1cGY3bTJ3dm9reWc5b2k3N2h0MXU0NCZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/FCffpN404oRZpFbSzl/giphy.gif"
+              alt="Pikachu"
+            />
+          </div>
+          <div class="card-details">
+            <p><strong>Type:</strong> Electric</p>
+            <p><strong>Ability:</strong> Static</p>
+          </div>
+        </div>
+
+        <!-- Charmander Card -->
+        <div class="pokemon-card fire">
+          <div class="card-header">
+            <span class="pokemon-name">Charmander</span>
+            <span class="hp">HP 50</span>
+          </div>
+          <div class="card-image">
+            <img
+              src="https://media.giphy.com/media/6xr4bW2csldWKmJkjO/giphy.gif?cid=790b7611h6p622k9s2tubxdvjssy5wkhfcnhk3x72a3uevta&ep=v1_stickers_search&rid=giphy.gif&ct=s"
+              alt="Charmander"
+            />
+          </div>
+          <div class="card-details">
+            <p><strong>Type:</strong> Fire</p>
+            <p><strong>Ability:</strong> Blaze</p>
+          </div>
+        </div>
+
+        <!-- Squirtle Card -->
+        <div class="pokemon-card water">
+          <div class="card-header">
+            <span class="pokemon-name">Squirtle</span>
+            <span class="hp">HP 55</span>
+          </div>
+          <div class="card-image">
+            <img
+              src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMGd4OXJidDNxdzVzNGJxd3dsdjBucXVwamhuNmhzajV5c3VmMGJtbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/sIo7BCXxPDPNDfS3dE/giphy.gif"
+              alt="Squirtle"
+            />
+          </div>
+          <div class="card-details">
+            <p><strong>Type:</strong> Water</p>
+            <p><strong>Ability:</strong> Torrent</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
