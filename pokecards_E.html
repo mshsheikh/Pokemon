@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pokémon Cards E</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+        min-height: 100vh;
+        color: #fff;
+        overflow-y: auto;
+      }
+
+      .content {
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        color: #ffcb05;
+        text-shadow: 3px 3px #2a75bb;
+        margin-bottom: 1.5rem;
+        letter-spacing: 2px;
+      }
+
+      h3 {
+        font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+        margin-bottom: 0.3rem;
+      }
+
+      .card-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+        gap: 2rem;
+        padding: 2rem 0;
+      }
+
+      .pokemon-card {
+        border-radius: 15px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        background-size: cover;
+        background-position: center;
+        aspect-ratio: 9/16;
+        padding: 12px;
+        gap: 0.5rem;
+      }
+
+      .pokemon-card:hover {
+        transform: translateY(-10px);
+      }
+
+      .pokemon-card::before {
+        content: attr(data-card-number);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 10vw;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 0.1);
+        z-index: 0;
+      }
+
+      .electric {
+        background: linear-gradient(145deg, #f8d030 0%, #b79f38 100%);
+      }
+
+      .fire {
+        background: linear-gradient(145deg, #f08030 0%, #9c531f 100%);
+      }
+
+      .water {
+        background: linear-gradient(145deg, #6890f0 0%, #445e9c 100%);
+      }
+
+      .card-image-container {
+        background: url("Poke-Graphics/pokemon-background-1.webp") bottom/cover
+          repeat-x;
+        flex: 0 0 60%;
+        border-radius: 12px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+        overflow: hidden;
+        margin: 0;
+      }
+
+      .pokemon-img {
+        width: 70%;
+        height: auto;
+        max-height: 90%;
+        object-fit: contain;
+        image-rendering: pixelated;
+        filter: drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.3));
+        z-index: 1;
+        transition: transform 0.3s ease;
+      }
+
+      .pokemon-id {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-weight: bold;
+        z-index: 2;
+        font-size: clamp(0.8rem, 1.5vw, 1rem);
+      }
+
+      .pokemon-details {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 12px;
+        padding: clamp(0.5rem, 1.5vw, 1rem);
+        color: #2c2c2c;
+        flex: 1;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+      }
+
+      .pokemon-name {
+        font-size: clamp(1rem, 2.2vw, 1.5rem);
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: #2a75bb;
+      }
+
+      .type-badge {
+        display: inline-block;
+        padding: 0.3rem 1rem;
+        border-radius: 20px;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+        margin-bottom: 0.5rem;
+      }
+
+      .electric .type-badge {
+        background: #f8d030;
+        color: #2c2c2c;
+      }
+      .fire .type-badge {
+        background: #f08030;
+        color: white;
+      }
+      .water .type-badge {
+        background: #6890f0;
+        color: white;
+      }
+
+      .stats-table {
+        width: 100%;
+        margin-bottom: 0.5rem;
+        font-size: clamp(0.6rem, 1vw, 0.8rem);
+      }
+
+      .stats-table td {
+        padding: 0.1rem;
+      }
+
+      .ability-list {
+        list-style: none;
+        padding-left: 0.5rem;
+        font-size: clamp(0.6rem, 1vw, 0.75rem);
+      }
+
+      .ability-list li {
+        margin-bottom: 0.2rem;
+        position: relative;
+      }
+
+      .ability-list li::before {
+        content: "•";
+        color: #2a75bb;
+        position: absolute;
+        left: -0.7rem;
+      }
+
+      @media (max-width: 768px) {
+        .card-container {
+          gap: 1rem;
+          padding: 1rem 0;
+        }
+        .pokemon-card {
+          min-height: auto;
+        }
+        .card-image-container {
+          margin-bottom: 0.5rem;
+        }
+      }
+
+      .three-container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      .electric-effect {
+        box-shadow: 0 0 25px #ffeb3b;
+      }
+      .fire-effect {
+        box-shadow: 0 0 25px #ff5722;
+      }
+      .water-effect {
+        box-shadow: 0 0 25px #2196f3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <h1>Pokémon Trading Cards</h1>
+      <div class="card-container">
+        <!-- Pikachu Card -->
+        <div class="pokemon-card electric" data-card-number="025">
+          <div class="three-container"></div>
+          <div class="pokemon-id">#025</div>
+          <div class="card-image-container">
+            <img
+              src="Poke-Graphics/happy-jumping-pikachu.gif"
+              alt="Pikachu"
+              class="pokemon-img"
+            />
+          </div>
+          <div class="pokemon-details">
+            <div class="pokemon-name">Pikachu</div>
+            <div class="type-badge">Electric</div>
+            <table class="stats-table">
+              <tr>
+                <td>HP:</td>
+                <td><strong>35</strong></td>
+                <td>Height:</td>
+                <td>0.4m</td>
+              </tr>
+              <tr>
+                <td>Attack:</td>
+                <td><strong>55</strong></td>
+                <td>Weight:</td>
+                <td>6.0kg</td>
+              </tr>
+              <tr>
+                <td>Defense:</td>
+                <td><strong>40</strong></td>
+                <td>Speed:</td>
+                <td>90</td>
+              </tr>
+            </table>
+            <h3>Abilities:</h3>
+            <ul class="ability-list">
+              <li>
+                <strong>Static:</strong> 30% chance to paralyze attackers on
+                contact
+              </li>
+              <li>
+                <strong>Lightning Rod:</strong> Draws in Electric-type moves to
+                boost Sp. Atk
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Charmander Card -->
+        <div class="pokemon-card fire" data-card-number="004">
+          <div class="three-container"></div>
+          <div class="pokemon-id">#004</div>
+          <div class="card-image-container">
+            <img
+              src="Poke-Graphics/shocked-charmander.gif"
+              alt="Charmander"
+              class="pokemon-img"
+            />
+          </div>
+          <div class="pokemon-details">
+            <div class="pokemon-name">Charmander</div>
+            <div class="type-badge">Fire</div>
+            <table class="stats-table">
+              <tr>
+                <td>HP:</td>
+                <td><strong>39</strong></td>
+                <td>Height:</td>
+                <td>0.6m</td>
+              </tr>
+              <tr>
+                <td>Attack:</td>
+                <td><strong>52</strong></td>
+                <td>Weight:</td>
+                <td>8.5kg</td>
+              </tr>
+              <tr>
+                <td>Defense:</td>
+                <td><strong>43</strong></td>
+                <td>Speed:</td>
+                <td>65</td>
+              </tr>
+            </table>
+            <h3>Abilities:</h3>
+            <ul class="ability-list">
+              <li>
+                <strong>Blaze:</strong> Boosts Fire moves by 50% when HP low
+              </li>
+              <li>
+                <strong>Solar Power:</strong> Increases Sp. Atk by 50% in sun
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Squirtle Card -->
+        <div class="pokemon-card water" data-card-number="007">
+          <div class="three-container"></div>
+          <div class="pokemon-id">#007</div>
+          <div class="card-image-container">
+            <img
+              src="Poke-Graphics/happy-squirtle.gif"
+              alt="Squirtle"
+              class="pokemon-img"
+            />
+          </div>
+          <div class="pokemon-details">
+            <div class="pokemon-name">Squirtle</div>
+            <div class="type-badge">Water</div>
+            <table class="stats-table">
+              <tr>
+                <td>HP:</td>
+                <td><strong>44</strong></td>
+                <td>Height:</td>
+                <td>0.5m</td>
+              </tr>
+              <tr>
+                <td>Attack:</td>
+                <td><strong>48</strong></td>
+                <td>Weight:</td>
+                <td>9.0kg</td>
+              </tr>
+              <tr>
+                <td>Defense:</td>
+                <td><strong>65</strong></td>
+                <td>Speed:</td>
+                <td>43</td>
+              </tr>
+            </table>
+            <h3>Abilities:</h3>
+            <ul class="ability-list">
+              <li>
+                <strong>Torrent:</strong> Boosts Water moves by 50% when HP low
+              </li>
+              <li><strong>Rain Dish:</strong> Recovers HP during rain</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      class EffectManager {
+        constructor(card, type) {
+          this.card = card;
+          this.type = type;
+          this.scene = new THREE.Scene();
+          this.camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+          this.renderer = new THREE.WebGLRenderer({
+            alpha: true,
+            antialias: true,
+          });
+          this.particles = [];
+          this.animationFrameId = null;
+
+          this.init();
+        }
+
+        init() {
+          const container = this.card.querySelector(".three-container");
+          const rect = this.card.getBoundingClientRect();
+
+          this.renderer.setSize(rect.width, rect.height);
+          this.renderer.setPixelRatio(window.devicePixelRatio);
+          this.renderer.domElement.className = "three-canvas";
+          container.appendChild(this.renderer.domElement);
+
+          this.camera.position.z = 5;
+          this.createParticles();
+          this.animate();
+        }
+
+        createParticles() {
+          const count = 100;
+          const positions = new Float32Array(count * 3);
+          const colors = new Float32Array(count * 3);
+
+          const color = new THREE.Color();
+          switch (this.type) {
+            case "electric":
+              color.set("#ffeb3b");
+              break;
+            case "fire":
+              color.set("#ff5722");
+              break;
+            case "water":
+              color.set("#2196f3");
+              break;
+          }
+
+          for (let i = 0; i < count; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 10;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 10;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+
+            colors[i * 3] = color.r;
+            colors[i * 3 + 1] = color.g;
+            colors[i * 3 + 2] = color.b;
+          }
+
+          const geometry = new THREE.BufferGeometry();
+          geometry.setAttribute(
+            "position",
+            new THREE.BufferAttribute(positions, 3)
+          );
+          geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+          const material = new THREE.PointsMaterial({
+            size: 0.1,
+            vertexColors: true,
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+          });
+
+          if (this.type === "water") {
+            material.size = 0.3;
+            material.opacity = 0.7;
+          }
+
+          const particles = new THREE.Points(geometry, material);
+          this.scene.add(particles);
+          this.particles.push(particles);
+        }
+
+        animate() {
+          this.animationFrameId = requestAnimationFrame(() => this.animate());
+
+          this.particles.forEach((particles) => {
+            const positions = particles.geometry.attributes.position.array;
+
+            for (let i = 0; i < positions.length; i += 3) {
+              switch (this.type) {
+                case "electric":
+                  positions[i + 1] += Math.random() * 0.1;
+                  positions[i + 0] += (Math.random() - 0.5) * 0.05;
+                  break;
+                case "fire":
+                  positions[i + 1] += 0.1;
+                  positions[i + 0] += (Math.random() - 0.5) * 0.02;
+                  break;
+                case "water":
+                  positions[i + 1] -= 0.05;
+                  positions[i + 2] += Math.sin(Date.now() * 0.001) * 0.02;
+                  break;
+              }
+
+              if (positions[i + 1] > 5) positions[i + 1] = -5;
+            }
+
+            particles.geometry.attributes.position.needsUpdate = true;
+          });
+
+          this.renderer.render(this.scene, this.camera);
+        }
+
+        dispose() {
+          cancelAnimationFrame(this.animationFrameId);
+          this.renderer.dispose();
+          this.scene.dispose();
+          const container = this.card.querySelector(".three-container");
+          container.innerHTML = "";
+        }
+      }
+
+      document.querySelectorAll(".pokemon-card").forEach((card) => {
+        let effectManager = null;
+
+        card.addEventListener("click", function () {
+          const type = Array.from(this.classList).find((c) =>
+            ["electric", "fire", "water"].includes(c)
+          );
+
+          // Cleanup previous effect
+          if (effectManager) effectManager.dispose();
+          this.classList.remove(
+            "electric-effect",
+            "fire-effect",
+            "water-effect"
+          );
+
+          // Add new effect
+          this.classList.add(`${type}-effect`);
+          effectManager = new EffectManager(this, type);
+
+          // Auto cleanup after 4 seconds
+          setTimeout(() => {
+            this.classList.remove(`${type}-effect`);
+            effectManager.dispose();
+            effectManager = null;
+          }, 4000);
+        });
+      });
+    </script>
+  </body>
+</html>
