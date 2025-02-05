@@ -389,7 +389,56 @@
           this.particles = [];
           this.animationFrameId = null;
 
+          this.shapes = {
+            triangle: this.createTriangleTexture(),
+            square: this.createSquareTexture(),
+            circle: this.createCircleTexture(),
+          };
+
           this.init();
+        }
+
+        createCircleTexture() {
+          const canvas = document.createElement("canvas");
+          canvas.width = 64;
+          canvas.height = 64;
+          const ctx = canvas.getContext("2d");
+
+          ctx.beginPath();
+          ctx.arc(32, 32, 16, 0, Math.PI * 2);
+          ctx.fillStyle = "white";
+          ctx.fill();
+
+          return new THREE.CanvasTexture(canvas);
+        }
+
+        createTriangleTexture() {
+          const canvas = document.createElement("canvas");
+          canvas.width = 64;
+          canvas.height = 64;
+          const ctx = canvas.getContext("2d");
+
+          ctx.beginPath();
+          ctx.moveTo(32, 10);
+          ctx.lineTo(54, 54);
+          ctx.lineTo(10, 54);
+          ctx.closePath();
+          ctx.fillStyle = "white";
+          ctx.fill();
+
+          return new THREE.CanvasTexture(canvas);
+        }
+
+        createSquareTexture() {
+          const canvas = document.createElement("canvas");
+          canvas.width = 64;
+          canvas.height = 64;
+          const ctx = canvas.getContext("2d");
+
+          ctx.fillStyle = "white";
+          ctx.fillRect(16, 16, 32, 32);
+
+          return new THREE.CanvasTexture(canvas);
         }
 
         init() {
@@ -401,7 +450,7 @@
           this.renderer.domElement.className = "three-canvas";
           container.appendChild(this.renderer.domElement);
 
-          this.camera.position.z = 5;
+          this.camera.position.z = 2;
           this.createParticles();
           this.animate();
         }
@@ -425,9 +474,9 @@
           }
 
           for (let i = 0; i < count; i++) {
-            positions[i * 3] = (Math.random() - 0.5) * 10;
-            positions[i * 3 + 1] = (Math.random() - 0.5) * 10;
-            positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+            positions[i * 3] = (Math.random() - 0.5) * 2;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 2;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 2;
 
             colors[i * 3] = color.r;
             colors[i * 3 + 1] = color.g;
@@ -441,18 +490,32 @@
           );
           geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
 
-          const material = new THREE.PointsMaterial({
-            size: 0.1,
+          const materialProps = {
             vertexColors: true,
             transparent: true,
             blending: THREE.AdditiveBlending,
-          });
+            sizeAttenuation: true,
+            depthTest: false,
+          };
 
-          if (this.type === "water") {
-            material.size = 0.3;
-            material.opacity = 0.7;
+          switch (this.type) {
+            case "electric":
+              materialProps.map = this.shapes.triangle;
+              materialProps.size = 0.1;
+              break;
+            case "fire":
+              materialProps.map = this.shapes.square;
+              materialProps.size = 0.15;
+              materialProps.opacity = 0.9;
+              break;
+            case "water":
+              materialProps.map = this.shapes.circle;
+              materialProps.size = 0.2;
+              materialProps.opacity = 0.7;
+              break;
           }
 
+          const material = new THREE.PointsMaterial(materialProps);
           const particles = new THREE.Points(geometry, material);
           this.scene.add(particles);
           this.particles.push(particles);
@@ -467,22 +530,22 @@
             for (let i = 0; i < positions.length; i += 3) {
               switch (this.type) {
                 case "electric":
-                  positions[i + 1] += Math.random() * 0.1;
                   positions[i + 0] += (Math.random() - 0.5) * 0.05;
+                  positions[i + 1] += (Math.random() - 0.5) * 0.05;
+                  positions[i + 2] += (Math.random() - 0.5) * 0.05;
                   break;
                 case "fire":
-                  positions[i + 1] += 0.1;
+                  positions[i + 1] += 0.05;
                   positions[i + 0] += (Math.random() - 0.5) * 0.02;
+                  if (positions[i + 1] > 1) positions[i + 1] = -1;
                   break;
                 case "water":
-                  positions[i + 1] -= 0.05;
-                  positions[i + 2] += Math.sin(Date.now() * 0.001) * 0.02;
+                  positions[i + 1] += 0.02;
+                  positions[i + 0] += Math.sin(Date.now() * 0.001 + i) * 0.01;
+                  if (positions[i + 1] > 1) positions[i + 1] = -1;
                   break;
               }
-
-              if (positions[i + 1] > 5) positions[i + 1] = -5;
             }
-
             particles.geometry.attributes.position.needsUpdate = true;
           });
 
@@ -493,6 +556,7 @@
           cancelAnimationFrame(this.animationFrameId);
           this.renderer.dispose();
           this.scene.dispose();
+          Object.values(this.shapes).forEach((texture) => texture.dispose());
           const container = this.card.querySelector(".three-container");
           container.innerHTML = "";
         }
@@ -506,7 +570,6 @@
             ["electric", "fire", "water"].includes(c)
           );
 
-          // Cleanup previous effect
           if (effectManager) effectManager.dispose();
           this.classList.remove(
             "electric-effect",
@@ -514,11 +577,9 @@
             "water-effect"
           );
 
-          // Add new effect
           this.classList.add(`${type}-effect`);
           effectManager = new EffectManager(this, type);
 
-          // Auto cleanup after 4 seconds
           setTimeout(() => {
             this.classList.remove(`${type}-effect`);
             effectManager.dispose();
