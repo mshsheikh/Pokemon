@@ -389,6 +389,7 @@
           this.particles = [];
           this.animationFrameId = null;
 
+          // Custom shapes texture
           this.shapes = {
             triangle: this.createTriangleTexture(),
             square: this.createSquareTexture(),
@@ -450,6 +451,7 @@
           this.renderer.domElement.className = "three-canvas";
           container.appendChild(this.renderer.domElement);
 
+          // Adjusted camera position
           this.camera.position.z = 2;
           this.createParticles();
           this.animate();
@@ -473,10 +475,11 @@
               break;
           }
 
+          // Adjusted initial positions
           for (let i = 0; i < count; i++) {
-            positions[i * 3] = (Math.random() - 0.5) * 2;
-            positions[i * 3 + 1] = (Math.random() - 0.5) * 2;
-            positions[i * 3 + 2] = (Math.random() - 0.5) * 2;
+            positions[i * 3] = (Math.random() - 0.5) * 2; // X
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 2; // Y
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 2; // Z
 
             colors[i * 3] = color.r;
             colors[i * 3 + 1] = color.g;
@@ -495,23 +498,23 @@
             transparent: true,
             blending: THREE.AdditiveBlending,
             sizeAttenuation: true,
-            depthTest: false,
+            depthTest: false, // Ensure particles render correctly
           };
 
           switch (this.type) {
             case "electric":
               materialProps.map = this.shapes.triangle;
-              materialProps.size = 0.1;
+              materialProps.size = 0.046;
               break;
             case "fire":
               materialProps.map = this.shapes.square;
-              materialProps.size = 0.15;
-              materialProps.opacity = 0.9;
+              materialProps.size = 0.06;
+              materialProps.opacity = 0.76;
               break;
             case "water":
               materialProps.map = this.shapes.circle;
-              materialProps.size = 0.2;
-              materialProps.opacity = 0.7;
+              materialProps.size = 0.16;
+              materialProps.opacity = 0.46;
               break;
           }
 
@@ -530,16 +533,19 @@
             for (let i = 0; i < positions.length; i += 3) {
               switch (this.type) {
                 case "electric":
+                  // Random directional flow
                   positions[i + 0] += (Math.random() - 0.5) * 0.05;
                   positions[i + 1] += (Math.random() - 0.5) * 0.05;
                   positions[i + 2] += (Math.random() - 0.5) * 0.05;
                   break;
                 case "fire":
+                  // Fast upward flow with slight horizontal variation
                   positions[i + 1] += 0.05;
                   positions[i + 0] += (Math.random() - 0.5) * 0.02;
                   if (positions[i + 1] > 1) positions[i + 1] = -1;
                   break;
                 case "water":
+                  // Slow upward flow with wave motion
                   positions[i + 1] += 0.02;
                   positions[i + 0] += Math.sin(Date.now() * 0.001 + i) * 0.01;
                   if (positions[i + 1] > 1) positions[i + 1] = -1;
@@ -556,6 +562,7 @@
           cancelAnimationFrame(this.animationFrameId);
           this.renderer.dispose();
           this.scene.dispose();
+          // Dispose textures
           Object.values(this.shapes).forEach((texture) => texture.dispose());
           const container = this.card.querySelector(".three-container");
           container.innerHTML = "";
@@ -570,6 +577,7 @@
             ["electric", "fire", "water"].includes(c)
           );
 
+          // Cleanup previous effect
           if (effectManager) effectManager.dispose();
           this.classList.remove(
             "electric-effect",
@@ -577,9 +585,11 @@
             "water-effect"
           );
 
+          // Add new effect
           this.classList.add(`${type}-effect`);
           effectManager = new EffectManager(this, type);
 
+          // Auto cleanup after 4 seconds
           setTimeout(() => {
             this.classList.remove(`${type}-effect`);
             effectManager.dispose();
