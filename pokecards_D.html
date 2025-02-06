@@ -91,8 +91,8 @@
       }
 
       .card-image-container {
-        background: url("Poke-Graphics/pokemon-background-1.webp")
-        bottom/cover repeat-x;
+        background: url("Poke-Graphics/pokemon-background-1.webp") bottom/cover
+          repeat-x;
         flex: 0 0 60%;
         border-radius: 12px;
         position: relative;
@@ -373,13 +373,14 @@
       </div>
     </div>
     <script>
+      // -- tsparticles -- //
+
       document.querySelectorAll(".pokemon-card").forEach((card) => {
         card.addEventListener("click", async function () {
           const type = Array.from(this.classList).find((c) =>
             ["electric", "fire", "water"].includes(c)
           );
 
-          // Remove existing effects
           this.classList.remove(
             "electric-effect",
             "fire-effect",
@@ -388,10 +389,10 @@
           const container = this.querySelector(".particles-container");
           container.innerHTML = "";
 
-          // Add visual effect
+          // Visual Effects
           this.classList.add(`${type}-effect`);
 
-          // Configure particles
+          // Configure
           const configs = {
             electric: {
               color: "#ffeb3b",
@@ -419,7 +420,7 @@
             },
           };
 
-          // Load particles
+          // Load
           await tsParticles.load({
             element: container,
             options: {
