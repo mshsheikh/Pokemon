@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pokémon Cards F</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.2/lottie.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+        min-height: 100vh;
+        color: #fff;
+        overflow-y: auto;
+      }
+
+      .content {
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        color: #ffcb05;
+        text-shadow: 3px 3px #2a75bb;
+        margin-bottom: 1.5rem;
+        letter-spacing: 2px;
+      }
+
+      h3 {
+        font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+        margin-bottom: 0.3rem;
+      }
+
+      .card-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+        gap: 2rem;
+        padding: 2rem 0;
+      }
+
+      .pokemon-card {
+        border-radius: 15px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        background-size: cover;
+        background-position: center;
+        aspect-ratio: 9/16;
+        padding: 12px;
+        gap: 0.5rem;
+      }
+
+      .pokemon-card:hover {
+        transform: translateY(-10px);
+      }
+
+      .pokemon-card::before {
+        content: attr(data-card-number);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 10vw;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 0.1);
+        z-index: 0;
+      }
+
+      .electric {
+        background: linear-gradient(145deg, #f8d030 0%, #b79f38 100%);
+      }
+
+      .fire {
+        background: linear-gradient(145deg, #f08030 0%, #9c531f 100%);
+      }
+
+      .water {
+        background: linear-gradient(145deg, #6890f0 0%, #445e9c 100%);
+      }
+
+      .card-image-container {
+        background: url("Poke-Graphics/pokemon-background-1.webp") bottom/cover
+          repeat-x;
+        flex: 0 0 60%;
+        border-radius: 12px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+        overflow: hidden;
+        margin: 0;
+      }
+
+      .pokemon-img {
+        width: 70%;
+        height: auto;
+        max-height: 90%;
+        object-fit: contain;
+        image-rendering: pixelated;
+        filter: drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.3));
+        z-index: 1;
+        transition: transform 0.3s ease;
+      }
+
+      .pokemon-id {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-weight: bold;
+        z-index: 2;
+        font-size: clamp(0.8rem, 1.5vw, 1rem);
+      }
+
+      .pokemon-details {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 12px;
+        padding: clamp(0.5rem, 1.5vw, 1rem);
+        color: #2c2c2c;
+        flex: 1;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+      }
+
+      .pokemon-name {
+        font-size: clamp(1rem, 2.2vw, 1.5rem);
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: #2a75bb;
+      }
+
+      .type-badge {
+        display: inline-block;
+        padding: 0.3rem 1rem;
+        border-radius: 20px;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+        margin-bottom: 0.5rem;
+      }
+
+      .electric .type-badge {
+        background: #f8d030;
+        color: #2c2c2c;
+      }
+      .fire .type-badge {
+        background: #f08030;
+        color: white;
+      }
+      .water .type-badge {
+        background: #6890f0;
+        color: white;
+      }
+
+      .stats-table {
+        width: 100%;
+        margin-bottom: 0.5rem;
+        font-size: clamp(0.6rem, 1vw, 0.8rem);
+      }
+
+      .stats-table td {
+        padding: 0.1rem;
+      }
+
+      .ability-list {
+        list-style: none;
+        padding-left: 0.5rem;
+        font-size: clamp(0.6rem, 1vw, 0.75rem);
+      }
+
+      .ability-list li {
+        margin-bottom: 0.2rem;
+        position: relative;
+      }
+
+      .ability-list li::before {
+        content: "•";
+        color: #2a75bb;
+        position: absolute;
+        left: -0.7rem;
+      }
+
+      @media (max-width: 768px) {
+        .card-container {
+          gap: 1rem;
+          padding: 1rem 0;
+        }
+        .pokemon-card {
+          min-height: auto;
+        }
+        .card-image-container {
+          margin-bottom: 0.5rem;
+        }
+      }
+
+      .three-container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      .electric-effect {
+        box-shadow: 0 0 25px #ffeb3b;
+      }
+      .fire-effect {
+        box-shadow: 0 0 25px #ff5722;
+      }
+      .water-effect {
+        box-shadow: 0 0 25px #2196f3;
+      }
+
+      .lottie-container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 2;
+        opacity: 0.9;
+        mix-blend-mode: screen;
+      }
+
+      .lottie-container svg {
+        transform-origin: center;
+      }
+
+      .electric-effect {
+        animation: electricFlash 0.8s ease-out;
+      }
+
+      .fire-effect {
+        animation: fireBurn 0.8s ease-out;
+      }
+
+      .water-effect {
+        animation: waterSplash 0.8s ease-out;
+      }
+
+      @keyframes electricFlash {
+        0% {
+          box-shadow: 0 0 10px #ffeb3b;
+        }
+        50% {
+          box-shadow: 0 0 40px #ffeb3b, 0 0 60px #ffeb3b;
+        }
+        100% {
+          box-shadow: 0 0 10px #ffeb3b;
+        }
+      }
+
+      @keyframes fireBurn {
+        0% {
+          box-shadow: 0 0 10px #ff5722;
+        }
+        50% {
+          box-shadow: 0 0 40px #ff5722, 0 0 60px #ff5722;
+        }
+        100% {
+          box-shadow: 0 0 10px #ff5722;
+        }
+      }
+
+      @keyframes waterSplash {
+        0% {
+          box-shadow: 0 0 10px #2196f3;
+        }
+        50% {
+          box-shadow: 0 0 40px #2196f3, 0 0 60px #2196f3;
+        }
+        100% {
+          box-shadow: 0 0 10px #2196f3;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <h1>Pokémon Trading Cards</h1>
+      <div class="card-container">
+        <!-- Pikachu Card with Thunder Bolt -->
+        <div class="pokemon-card electric" data-card-number="025">
+          <div class="lottie-container"></div>
+          <div class="pokemon-id">#025</div>
+          <div class="card-image-container">
+            <img
+              src="Poke-Graphics/happy-jumping-pikachu.gif"
+              alt="Pikachu"
+              class="pokemon-img"
+            />
+          </div>
+          <div class="pokemon-details">
+            <div class="pokemon-name">Pikachu</div>
+            <div class="type-badge">Electric</div>
+            <table class="stats-table">
+              <tr>
+                <td>HP:</td>
+                <td><strong>35</strong></td>
+                <td>Height:</td>
+                <td>0.4m</td>
+              </tr>
+              <tr>
+                <td>Attack:</td>
+                <td><strong>55</strong></td>
+                <td>Weight:</td>
+                <td>6.0kg</td>
+              </tr>
+              <tr>
+                <td>Defense:</td>
+                <td><strong>40</strong></td>
+                <td>Speed:</td>
+                <td>90</td>
+              </tr>
+            </table>
+            <h3>Abilities:</h3>
+            <ul class="ability-list">
+              <li>
+                <strong>Static:</strong> 30% chance to paralyze attackers on
+                contact
+              </li>
+              <li>
+                <strong>Lightning Rod:</strong> Draws in Electric-type moves to
+                boost Sp. Atk
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Charmander Card with Lava Fire -->
+        <div class="pokemon-card fire" data-card-number="004">
+          <div class="lottie-container"></div>
+          <div class="pokemon-id">#004</div>
+          <div class="card-image-container">
+            <img
+              src="Poke-Graphics/shocked-charmander.gif"
+              alt="Charmander"
+              class="pokemon-img"
+            />
+          </div>
+          <div class="pokemon-details">
+            <div class="pokemon-name">Charmander</div>
+            <div class="type-badge">Fire</div>
+            <table class="stats-table">
+              <tr>
+                <td>HP:</td>
+                <td><strong>39</strong></td>
+                <td>Height:</td>
+                <td>0.6m</td>
+              </tr>
+              <tr>
+                <td>Attack:</td>
+                <td><strong>52</strong></td>
+                <td>Weight:</td>
+                <td>8.5kg</td>
+              </tr>
+              <tr>
+                <td>Defense:</td>
+                <td><strong>43</strong></td>
+                <td>Speed:</td>
+                <td>65</td>
+              </tr>
+            </table>
+            <h3>Abilities:</h3>
+            <ul class="ability-list">
+              <li>
+                <strong>Blaze:</strong> Boosts Fire moves by 50% when HP low
+              </li>
+              <li>
+                <strong>Solar Power:</strong> Increases Sp. Atk by 50% in sun
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Squirtle Card with Water Gun -->
+        <div class="pokemon-card water" data-card-number="007">
+          <div class="lottie-container"></div>
+          <div class="pokemon-id">#007</div>
+          <div class="card-image-container">
+            <img
+              src="Poke-Graphics/happy-squirtle.gif"
+              alt="Squirtle"
+              class="pokemon-img"
+            />
+          </div>
+          <div class="pokemon-details">
+            <div class="pokemon-name">Squirtle</div>
+            <div class="type-badge">Water</div>
+            <table class="stats-table">
+              <tr>
+                <td>HP:</td>
+                <td><strong>44</strong></td>
+                <td>Height:</td>
+                <td>0.5m</td>
+              </tr>
+              <tr>
+                <td>Attack:</td>
+                <td><strong>48</strong></td>
+                <td>Weight:</td>
+                <td>9.0kg</td>
+              </tr>
+              <tr>
+                <td>Defense:</td>
+                <td><strong>65</strong></td>
+                <td>Speed:</td>
+                <td>43</td>
+              </tr>
+            </table>
+            <h3>Abilities:</h3>
+            <ul class="ability-list">
+              <li>
+                <strong>Torrent:</strong> Boosts Water moves by 50% when HP low
+              </li>
+              <li><strong>Rain Dish:</strong> Recovers HP during rain</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const ANIMATION_CONFIG = {
+        electric: {
+          path: "https://assets1.lottiefiles.com/packages/lf20_ky24qkwe.json",
+          scale: 1.8,
+          position: { top: "0%", left: "0%" },
+          speed: 1.5,
+        },
+        fire: {
+          path: "https://assets6.lottiefiles.com/packages/lf20_5vSo4D.json",
+          scale: 2.2,
+          position: { top: "-20%", left: "-20%" },
+          speed: 1.3,
+        },
+        water: {
+          path: "https://assets2.lottiefiles.com/packages/lf20_jgj8o5jx.json",
+          scale: 2.0,
+          position: { top: "-10%", left: "-10%" },
+          speed: 1.4,
+        },
+      };
+
+      document.querySelectorAll(".pokemon-card").forEach((card) => {
+        let animationInstance = null;
+        const type = Array.from(card.classList).find((c) =>
+          ["electric", "fire", "water"].includes(c)
+        );
+
+        const initAnimation = () => {
+          const container = card.querySelector(".lottie-container");
+          if (animationInstance) animationInstance.destroy();
+
+          container.style.cssText = Object.entries(
+            ANIMATION_CONFIG[type].position
+          )
+            .map(([k, v]) => `${k}:${v}`)
+            .join(";");
+
+          animationInstance = lottie.loadAnimation({
+            container: container,
+            renderer: "svg",
+            loop: false,
+            autoplay: true,
+            path: ANIMATION_CONFIG[type].path,
+          });
+
+          animationInstance.setSpeed(ANIMATION_CONFIG[type].speed);
+          animationInstance.addEventListener("DOMLoaded", () => {
+            const svg = container.querySelector("svg");
+            svg.style.transform = `scale(${ANIMATION_CONFIG[type].scale})`;
+            svg.style.transformOrigin = "center";
+          });
+
+          card.classList.add(`${type}-effect`);
+          animationInstance.addEventListener("complete", () => {
+            card.classList.remove(`${type}-effect`);
+            animationInstance.destroy();
+            animationInstance = null;
+          });
+        };
+
+        card.addEventListener("click", initAnimation);
+        card.addEventListener("touchstart", initAnimation);
+      });
+    </script>
+  </body>
+</html>
