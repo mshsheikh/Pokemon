@@ -389,7 +389,6 @@
           this.particles = [];
           this.animationFrameId = null;
 
-          // Custom shapes texture
           this.shapes = {
             triangle: this.createTriangleTexture(),
             square: this.createSquareTexture(),
@@ -451,7 +450,7 @@
           this.renderer.domElement.className = "three-canvas";
           container.appendChild(this.renderer.domElement);
 
-          // Adjusted camera position
+          // Camera position
           this.camera.position.z = 2;
           this.createParticles();
           this.animate();
@@ -475,7 +474,7 @@
               break;
           }
 
-          // Adjusted initial positions
+          // Initial positions
           for (let i = 0; i < count; i++) {
             positions[i * 3] = (Math.random() - 0.5) * 2; // X
             positions[i * 3 + 1] = (Math.random() - 0.5) * 2; // Y
