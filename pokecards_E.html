@@ -577,7 +577,7 @@
             ["electric", "fire", "water"].includes(c)
           );
 
-          // Cleanup previous effect
+          // Cleanup for previous effect
           if (effectManager) effectManager.dispose();
           this.classList.remove(
             "electric-effect",
@@ -585,7 +585,7 @@
             "water-effect"
           );
 
-          // Add new effect
+          // New effect
           this.classList.add(`${type}-effect`);
           effectManager = new EffectManager(this, type);
 
