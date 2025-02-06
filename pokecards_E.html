@@ -539,13 +539,13 @@
                   positions[i + 2] += (Math.random() - 0.5) * 0.05;
                   break;
                 case "fire":
-                  // Fast upward flow with slight horizontal variation
+                  // Fast upward flow + slight horizontal variation
                   positions[i + 1] += 0.05;
                   positions[i + 0] += (Math.random() - 0.5) * 0.02;
                   if (positions[i + 1] > 1) positions[i + 1] = -1;
                   break;
                 case "water":
-                  // Slow upward flow with wave motion
+                  // Slow upward flow + wave motion
                   positions[i + 1] += 0.02;
                   positions[i + 0] += Math.sin(Date.now() * 0.001 + i) * 0.01;
                   if (positions[i + 1] > 1) positions[i + 1] = -1;
@@ -589,7 +589,7 @@
           this.classList.add(`${type}-effect`);
           effectManager = new EffectManager(this, type);
 
-          // Auto cleanup after 4 seconds
+          // Auto cleanup
           setTimeout(() => {
             this.classList.remove(`${type}-effect`);
             effectManager.dispose();
