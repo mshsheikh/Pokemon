@@ -561,7 +561,6 @@
           cancelAnimationFrame(this.animationFrameId);
           this.renderer.dispose();
           this.scene.dispose();
-          // Dispose textures
           Object.values(this.shapes).forEach((texture) => texture.dispose());
           const container = this.card.querySelector(".three-container");
           container.innerHTML = "";
